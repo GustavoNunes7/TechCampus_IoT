@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Máquinas • TechCampus IoT{% endblock %}
+{% block heading %}Máquinas{% endblock %}
+{% block description %}Máquinas IoT conectadas ao servidor.{% endblock %}
+{% block content %}
+<div class="panel">
+<table><thead><tr><th>Código</th><th>Nome</th><th>Local</th><th>Status</th></tr></thead>
+<tbody id="maquinas"></tbody></table>
+</div>
+<script>
+async function carregar(){const r=await fetch('/api/maquinas');const dados=await r.json();document.getElementById('maquinas').innerHTML=dados.map(m=>'<tr><td>'+m.codigo+'</td><td>'+m.nome+'</td><td>'+(m.local||'—')+'</td><td><span class="badge '+(m.status==='online'?'success':'')+'">'+m.status+'</span></td></tr>').join('')||'<tr><td colspan="4" class="empty">Nenhuma máquina cadastrada.</td></tr>'}carregar();setInterval(carregar,5000);
+</script>
+{% endblock %}
