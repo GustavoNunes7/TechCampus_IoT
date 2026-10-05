@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TechCampus IoT{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-mark">TC</div>
+            <div>
+                <strong>TechCampus</strong>
+                <span>IoT Server</span>
+            </div>
+        </div>
+        <nav>
+            <a href="/" class="{% if request.path == '/' %}active{% endif %}">Dashboard</a>
+            <a href="/solicitacoes" class="{% if request.path == '/solicitacoes' %}active{% endif %}">Solicitações</a>
+            <a href="/tokens" class="{% if request.path == '/tokens' %}active{% endif %}">Tokens</a>
+            <a href="/estoque" class="{% if request.path == '/estoque' %}active{% endif %}">Estoque</a>
+            <a href="/maquinas" class="{% if request.path == '/maquinas' %}active{% endif %}">Máquinas</a>
+        </nav>
+        <div class="sidebar-footer">
+            <span class="online-dot"></span> API online
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <h1>{% block heading %}Dashboard{% endblock %}</h1>
+                <p>{% block description %}Controle da camada IoT do TechCampus.{% endblock %}</p>
+            </div>
+        </header>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
