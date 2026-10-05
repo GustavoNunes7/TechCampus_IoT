@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Solicitação • TechCampus IoT{% endblock %}
+{% block heading %}Nova solicitação{% endblock %}
+{% block description %}Simule a solicitação de material antes de conectar o ESP8266.{% endblock %}
+{% block content %}
+<div class="panel form">
+<div class="field"><label>Aluno</label><select id="aluno"><option value="1">Gustavo Nunes — ID 1</option></select></div>
+<div class="field"><label>Material</label><select id="material"></select></div>
+<div class="field"><label>Máquina</label><select id="maquina"></select></div>
+<button onclick="gerar()">Gerar token</button>
+<div class="result" id="resultado"></div>
+</div>
+<script>
+async function carregar(){
+ const estoque=await fetch('/api/estoque').then(r=>r.json());
+ const maquinas=await fetch('/api/maquinas').then(r=>r.json());
+ document.getElementById('material').innerHTML=estoque.filter(m=>m.ativo&&m.quantidade>0).map(m=>'<option value="'+m.id+'">'+m.nome+' — '+m.quantidade+' disponíveis</option>').join('');
+ document.getElementById('maquina').innerHTML=maquinas.filter(m=>m.status==='online').map(m=>'<option value="'+m.id+'">'+m.codigo+' — '+m.nome+'</option>').join('');
+}
+async function gerar(){
+ const resultado=document.getElementById('resultado');
+ const r=await fetch('/api/solicitacoes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({aluno_id:Number(document.getElementById('aluno').value),material_id:Number(document.getElementById('material').value),maquina_id:Number(document.getElementById('maquina').value)})});
+ const dados=await r.json();
+ resultado.style.display='block';
+ if(!r.ok){resultado.innerHTML='<strong>Erro:</strong> '+(dados.erro||'Não foi possível gerar o token.');return;}
+ resultado.innerHTML='<div>Token gerado</div><div class="token-big">'+dados.token+'</div><div>Válido até '+new Date(dados.validade).toLocaleString('pt-BR')+'</div>';
+}
+carregar();
+</script>
+{% endblock %}
