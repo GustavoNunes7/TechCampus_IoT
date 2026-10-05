@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Dashboard • TechCampus IoT{% endblock %}
+{% block heading %}Dashboard{% endblock %}
+{% block description %}Visão geral do servidor, estoque, máquinas e tokens.{% endblock %}
+{% block content %}
+<section class="cards">
+    <div class="card"><div class="card-label">Status</div><div class="card-value" id="status">...</div></div>
+    <div class="card"><div class="card-label">Materiais</div><div class="card-value" id="materiais">0</div></div>
+    <div class="card"><div class="card-label">Máquinas</div><div class="card-value" id="maquinas">0</div></div>
+    <div class="card"><div class="card-label">Tokens</div><div class="card-value" id="tokens">0</div></div>
+</section>
+<section class="grid">
+    <div class="panel">
+        <h2>Últimos tokens</h2>
+        <table><thead><tr><th>Token</th><th>Material</th><th>Status</th></tr></thead><tbody id="ultimos"></tbody></table>
+    </div>
+    <div class="panel">
+        <h2>Estoque</h2>
+        <table><thead><tr><th>Material</th><th>Quantidade</th></tr></thead><tbody id="estoque"></tbody></table>
+    </div>
+</section>
+<script>
+async function carregar(){
+ const [health, estoque, maquinas, tokens] = await Promise.all([
+   fetch('/api/health').then(r=>r.json()),
+   fetch('/api/estoque').then(r=>r.json()),
+   fetch('/api/maquinas').then(r=>r.json()),
+   fetch('/api/tokens').then(r=>r.json())
+ ]);
+ document.getElementById('status').textContent=health.status==='online'?'Online':'Offline';
+ document.getElementById('materiais').textContent=estoque.length;
+ document.getElementById('maquinas').textContent=maquinas.length;
+ document.getElementById('tokens').textContent=tokens.length;
+ document.getElementById('ultimos').innerHTML=tokens.slice(0,6).map(t=>'<tr><td>'+t.token+'</td><td>'+t.material+'</td><td><span class="badge">'+t.status+'</span></td></tr>').join('')||'<tr><td colspan="3" class="empty">Nenhum token.</td></tr>';
+ document.getElementById('estoque').innerHTML=estoque.map(m=>'<tr><td>'+m.nome+'</td><td>'+m.quantidade+'</td></tr>').join('')||'<tr><td colspan="2" class="empty">Nenhum material.</td></tr>';
+}
+carregar();setInterval(carregar,5000);
+</script>
+{% endblock %}
