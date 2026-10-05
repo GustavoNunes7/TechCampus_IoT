@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Estoque • TechCampus IoT{% endblock %}
+{% block heading %}Estoque{% endblock %}
+{% block description %}Materiais disponíveis para retirada nas máquinas.{% endblock %}
+{% block content %}
+<div class="panel">
+<table><thead><tr><th>ID</th><th>Material</th><th>Descrição</th><th>Quantidade</th><th>Status</th></tr></thead>
+<tbody id="estoque"></tbody></table>
+</div>
+<script>
+async function carregar(){const r=await fetch('/api/estoque');const dados=await r.json();document.getElementById('estoque').innerHTML=dados.map(m=>'<tr><td>'+m.id+'</td><td>'+m.nome+'</td><td>'+ (m.descricao||'—') +'</td><td>'+m.quantidade+'</td><td><span class="badge '+(m.ativo?'success':'')+'">'+(m.ativo?'Ativo':'Inativo')+'</span></td></tr>').join('')||'<tr><td colspan="5" class="empty">Nenhum material cadastrado.</td></tr>'}carregar();setInterval(carregar,5000);
+</script>
+{% endblock %}
