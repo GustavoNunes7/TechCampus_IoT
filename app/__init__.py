@@ -7,6 +7,7 @@ from .routes.tokens import tokens_bp
 from .routes.estoque import estoque_bp
 from .routes.maquinas import maquinas_bp
 from .routes.iot import iot_bp
+from .routes.painel import painel_bp
 
 
 def create_app():
@@ -15,6 +16,10 @@ def create_app():
 
     with app.app_context():
         init_db()
+
+    @app.get("/api/")
+    def api_inicio():
+        return {"servico": "TechCampus IoT", "status": "online", "painel": "/"}
 
     @app.get("/")
     def inicio():
@@ -142,5 +147,6 @@ def create_app():
     app.register_blueprint(estoque_bp, url_prefix="/api")
     app.register_blueprint(maquinas_bp, url_prefix="/api")
     app.register_blueprint(iot_bp, url_prefix="/api")
+    app.register_blueprint(painel_bp)
 
     return app
