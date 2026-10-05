@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Tokens • TechCampus IoT{% endblock %}
+{% block heading %}Tokens{% endblock %}
+{% block description %}Acompanhe os tokens gerados e seu ciclo de vida.{% endblock %}
+{% block content %}
+<div class="panel">
+<table><thead><tr><th>Token</th><th>Aluno</th><th>Material</th><th>Máquina</th><th>Validade</th><th>Status</th></tr></thead>
+<tbody id="tokens"><tr><td colspan="6" class="empty">Carregando...</td></tr></tbody></table>
+</div>
+<script>
+async function carregar(){const r=await fetch('/api/tokens');const dados=await r.json();document.getElementById('tokens').innerHTML=dados.map(t=>'<tr><td>'+t.token+'</td><td>'+t.aluno+'</td><td>'+t.material+'</td><td>'+(t.maquina||'Não definida')+'</td><td>'+new Date(t.expira_em).toLocaleString('pt-BR')+'</td><td><span class="badge">'+t.status+'</span></td></tr>').join('')||'<tr><td colspan="6" class="empty">Nenhum token gerado.</td></tr>'}carregar();setInterval(carregar,5000);
+</script>
+{% endblock %}
